@@ -1,0 +1,2252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Recepção - Levitiis Media Lab</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #3b82f6;
+            --success-color: #22c55e;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --dark-bg: #1f2937;
+            --dark-card: #374151;
+            --dark-text: #f3f4f6;
+            --light-bg: #f9fafb;
+            --light-card: #ffffff;
+            --light-text: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--light-text);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--light-card);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        body.dark-mode header {
+            background-color: var(--dark-card);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        body.dark-mode .tabs {
+            border-bottom-color: #4b5563;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--light-text);
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        body.dark-mode .tab {
+            color: var(--dark-text);
+        }
+
+        .tab:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+
+        .tab.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background-color: var(--light-card);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        body.dark-mode .card {
+            background-color: var(--dark-card);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: var(--light-bg);
+            color: var(--light-text);
+        }
+
+        body.dark-mode input,
+        body.dark-mode select,
+        body.dark-mode textarea {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            border-color: #4b5563;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+        }
+
+        .room-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .room-card {
+            border-color: #4b5563;
+        }
+
+        .room-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .room-card.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+
+        .room-card.sala-azul {
+            position: relative;
+        }
+        
+        .room-card.sala-azul::before {
+            content: '⭐';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+        }
+
+        .room-card.sala-azul h3 {
+            color: #2563eb;
+        }
+        
+        .room-card.sala-azul.selected {
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .alert.success {
+            background-color: rgba(34, 197, 94, 0.1);
+            border: 2px solid var(--success-color);
+            color: var(--success-color);
+        }
+
+        .alert.error {
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 2px solid var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .time-slot {
+            padding: 10px;
+            background-color: #f3f4f6;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        body.dark-mode .time-slot {
+            background-color: #4b5563;
+        }
+
+        .room-schedule {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .slot {
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark-mode .slot {
+            border-color: #4b5563;
+        }
+
+        .slot.occupied {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger-color);
+        }
+
+        .slot.available {
+            background-color: rgba(34, 197, 94, 0.1);
+            border-color: var(--success-color);
+            cursor: pointer;
+        }
+
+        .slot.available:hover {
+            background-color: rgba(34, 197, 94, 0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: var(--light-card);
+            margin: 50px auto;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 15px;
+            animation: modalSlide 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        body.dark-mode .modal-content {
+            background-color: var(--dark-card);
+        }
+
+        @keyframes modalSlide {
+            from { transform: translateY(-100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #6b7280;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: var(--danger-color);
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .stat-card h3 {
+            font-size: 36px;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .dark-mode-toggle {
+            background-color: #4b5563;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode-toggle:hover {
+            background-color: #6b7280;
+        }
+
+        .history-item {
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        body.dark-mode .history-item {
+            border-bottom-color: #4b5563;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge.sala-azul {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+            
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .room-schedule {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            #dashboard-content, #dashboard-content * {
+                visibility: visible;
+            }
+            
+            #dashboard-content {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        }
+
+        /* Estilos do Calendário */
+        .calendar-container {
+            margin-top: 20px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .calendar-nav button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .calendar-nav button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .view-selector {
+            display: flex;
+            gap: 5px;
+            background: rgba(255,255,255,0.1);
+            padding: 5px;
+            border-radius: 8px;
+        }
+
+        .view-selector button {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-selector button.active {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Calendário Mensal */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background-color: #e5e7eb;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        body.dark-mode .calendar-grid {
+            background-color: #4b5563;
+            border-color: #4b5563;
+        }
+
+        .calendar-day-header {
+            background-color: #f3f4f6;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        body.dark-mode .calendar-day-header {
+            background-color: #374151;
+            color: #9ca3af;
+        }
+
+        .calendar-day {
+            background-color: white;
+            min-height: 100px;
+            padding: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .calendar-day {
+            background-color: #1f2937;
+        }
+
+        .calendar-day:hover {
+            background-color: #f9fafb;
+        }
+
+        body.dark-mode .calendar-day:hover {
+            background-color: #374151;
+        }
+
+        .calendar-day.other-month {
+            opacity: 0.3;
+        }
+
+        .calendar-day.selected {
+            background-color: rgba(37, 99, 235, 0.1);
+            border: 2px solid var(--primary-color);
+        }
+
+        .calendar-day-number {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .calendar-day.today .calendar-day-number {
+            background-color: var(--primary-color);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 5px;
+        }
+
+        .calendar-event {
+            font-size: 11px;
+            padding: 2px 5px;
+            margin: 2px 0;
+            border-radius: 3px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            cursor: pointer;
+        }
+
+        .calendar-event.sala-azul {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #2563eb;
+            border-left: 3px solid #3b82f6;
+        }
+
+        .calendar-event.sala-vermelha {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #dc2626;
+            border-left: 3px solid #ef4444;
+        }
+
+        .calendar-event.sala-verde {
+            background-color: rgba(34, 197, 94, 0.2);
+            color: #16a34a;
+            border-left: 3px solid #22c55e;
+        }
+
+        .calendar-event.sala-laranja {
+            background-color: rgba(251, 146, 60, 0.2);
+            color: #ea580c;
+            border-left: 3px solid #fb923c;
+        }
+
+        .calendar-event.espaco-treinamento {
+            background-color: rgba(168, 85, 247, 0.2);
+            color: #7c3aed;
+            border-left: 3px solid #a855f7;
+        }
+
+        /* Visualização Semanal */
+        .week-view {
+            display: grid;
+            grid-template-columns: 80px repeat(7, 1fr);
+            gap: 1px;
+            background-color: #e5e7eb;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        body.dark-mode .week-view {
+            background-color: #4b5563;
+            border-color: #4b5563;
+        }
+
+        .week-time-slot {
+            background-color: #f3f4f6;
+            padding: 10px 5px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 500;
+            color: #6b7280;
+        }
+
+        body.dark-mode .week-time-slot {
+            background-color: #374151;
+            color: #9ca3af;
+        }
+
+        .week-day-column {
+            background-color: white;
+            position: relative;
+            min-height: 60px;
+        }
+
+        body.dark-mode .week-day-column {
+            background-color: #1f2937;
+        }
+
+        .week-event {
+            position: absolute;
+            left: 2px;
+            right: 2px;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .event-actions {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            display: none;
+            gap: 5px;
+        }
+
+        .calendar-event:hover .event-actions,
+        .week-event:hover .event-actions {
+            display: flex;
+        }
+
+        .event-action-btn {
+            background: rgba(255,255,255,0.9);
+            border: 1px solid #e5e7eb;
+            border-radius: 3px;
+            padding: 2px 6px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .event-action-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        body.dark-mode .event-action-btn {
+            background: rgba(31,41,55,0.9);
+            border-color: #4b5563;
+        }
+
+        body.dark-mode .event-action-btn:hover {
+            background: #1f2937;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">📋 Sistema de Recepção - Levitiis Media Lab</div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span id="sync-indicator" style="font-size: 14px; font-weight: 500;"></span>
+                <button class="btn btn-success" onclick="configurarGoogleSheets()" title="Configurar salvamento automático">
+                    ☁️ Google Sheets
+                </button>
+                <button class="dark-mode-toggle" onclick="toggleDarkMode()">🌙 Modo Escuro</button>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('dashboard')">📊 Painel Diário</button>
+            <button class="tab" onclick="showTab('cadastro')">👤 Cadastrar Pessoa</button>
+            <button class="tab" onclick="showTab('agendamento')">📅 Agendar</button>
+            <button class="tab" onclick="showTab('historico')">📜 Histórico</button>
+        </div>
+
+        <div id="alert" class="alert"></div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="tab-content active">
+            <div class="card">
+                <h2>📊 Painel de Agendamentos</h2>
+                
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <h3 id="total-agendamentos">0</h3>
+                        <p>Total de Agendamentos</p>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);">
+                        <h3 id="salas-disponiveis">5</h3>
+                        <p>Salas Disponíveis</p>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                        <h3 id="visitantes-hoje">0</h3>
+                        <p>Visitantes Hoje</p>
+                    </div>
+                </div>
+
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <div class="calendar-nav">
+                            <button onclick="navegarCalendario(-1)">◄</button>
+                            <h3 id="calendar-title">Janeiro 2025</h3>
+                            <button onclick="navegarCalendario(1)">►</button>
+                        </div>
+                        <div class="view-selector">
+                            <button class="active" onclick="mudarVisualizacao('dia')">Dia</button>
+                            <button onclick="mudarVisualizacao('semana')">Semana</button>
+                            <button onclick="mudarVisualizacao('mes')">Mês</button>
+                        </div>
+                    </div>
+
+                    <div id="dashboard-content">
+                        <!-- Conteúdo dinâmico do calendário -->
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="exportarDia()">📥 Exportar (CSV)</button>
+                    <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir</button>
+                    <button class="btn btn-success" onclick="backupDados()">💾 Backup Completo</button>
+                    <button class="btn btn-warning" onclick="importarDoGoogleSheets()" 
+                            style="background-color: #f59e0b; color: white;"
+                            title="Recuperar dados do Google Sheets">
+                        ☁️ Recuperar da Nuvem
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cadastro de Pessoas -->
+        <div id="cadastro" class="tab-content">
+            <div class="card">
+                <h2>👤 Cadastrar Pessoa</h2>
+                <form id="form-cadastro" onsubmit="cadastrarPessoa(event)">
+                    <div class="form-group">
+                        <label for="nome">Nome Completo*</label>
+                        <input type="text" id="nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail*</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="celular">Celular*</label>
+                        <input type="tel" id="celular" placeholder="(11) 99999-9999" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo">Tipo</label>
+                        <select id="tipo">
+                            <option value="visitante">Visitante</option>
+                            <option value="colaborador">Colaborador</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">✅ Cadastrar</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>📋 Pessoas Cadastradas</h2>
+                <div id="lista-pessoas">
+                    <!-- Lista dinâmica de pessoas -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Agendamento -->
+        <div id="agendamento" class="tab-content">
+            <div class="card">
+                <h2>📅 Agendar Reunião/Visita</h2>
+                <form id="form-agendamento" onsubmit="criarAgendamento(event)">
+                    <div class="form-group">
+                        <label for="pessoa-agendamento">Pessoa*</label>
+                        <select id="pessoa-agendamento" required>
+                            <option value="">Selecione uma pessoa</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="data-agendamento">Data*</label>
+                        <input type="date" id="data-agendamento" required onchange="verificarDisponibilidade()">
+                    </div>
+                    <div class="form-group">
+                        <label for="horario-inicio">Horário de Início*</label>
+                        <select id="horario-inicio" required onchange="verificarDisponibilidade()">
+                            <option value="">Selecione</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="duracao">Duração*</label>
+                        <select id="duracao" required onchange="verificarDisponibilidade()">
+                            <option value="30">30 minutos</option>
+                            <option value="60">1 hora</option>
+                            <option value="90">1h30</option>
+                            <option value="120">2 horas</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Selecione a Sala*</label>
+                        <div id="salas-container">
+                            <div class="room-card sala-azul" onclick="selecionarSala('sala-azul', this)">
+                                <h3>🔵 Sala Azul (Destaque)</h3>
+                                <p><strong>Capacidade:</strong> 11 pessoas</p>
+                                <p><strong>Recursos:</strong> Mesa de reunião, Webcam, PC completo, TV 70", Lousa de vidro grande</p>
+                                <p><strong>Ideal para:</strong> Reuniões grandes e híbridas</p>
+                            </div>
+                            <div class="room-card" onclick="selecionarSala('sala-vermelha', this)">
+                                <h3>🔴 Sala Vermelha</h3>
+                                <p><strong>Capacidade:</strong> 5 pessoas</p>
+                                <p><strong>Recursos:</strong> TV 40" HDMI, Lousa móvel, Lousa de vidro</p>
+                                <p><strong>Ideal para:</strong> Reuniões pequenas</p>
+                            </div>
+                            <div class="room-card" onclick="selecionarSala('sala-verde', this)">
+                                <h3>🟢 Sala Verde</h3>
+                                <p><strong>Capacidade:</strong> 5 pessoas</p>
+                                <p><strong>Recursos:</strong> TV 40" HDMI, Lousa móvel, Lousa de vidro</p>
+                                <p><strong>Ideal para:</strong> Reuniões pequenas</p>
+                            </div>
+                            <div class="room-card" onclick="selecionarSala('sala-laranja', this)">
+                                <h3>🟠 Sala Laranja</h3>
+                                <p><strong>Capacidade:</strong> 5 pessoas</p>
+                                <p><strong>Recursos:</strong> TV 40" HDMI, Lousa móvel, Lousa de vidro</p>
+                                <p><strong>Ideal para:</strong> Reuniões pequenas</p>
+                            </div>
+                            <div class="room-card" onclick="selecionarSala('espaco-treinamento', this)">
+                                <h3>🎓 Espaço de Treinamento</h3>
+                                <p><strong>Capacidade:</strong> 30 pessoas (3 mesas, 10 cadeiras cada)</p>
+                                <p><strong>Recursos:</strong> 4 TVs (1 touch), Adaptável</p>
+                                <p><strong>Ideal para:</strong> Apresentações, cursos e treinamentos</p>
+                            </div>
+                        </div>
+                        <input type="hidden" id="sala-selecionada" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="observacoes">Observações / Motivo da Visita</label>
+                        <textarea id="observacoes" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">✅ Confirmar Agendamento</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Histórico -->
+        <div id="historico" class="tab-content">
+            <div class="card">
+                <h2>📜 Histórico de Visitas</h2>
+                <div class="form-group">
+                    <label for="busca-historico">Buscar por nome ou e-mail:</label>
+                    <input type="text" id="busca-historico" onkeyup="buscarHistorico()" placeholder="Digite para buscar...">
+                </div>
+                <div id="lista-historico">
+                    <!-- Lista dinâmica de histórico -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Detalhes -->
+    <div id="modal-detalhes" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">&times;</span>
+            <h2>📋 Detalhes do Agendamento</h2>
+            <div id="modal-body">
+                <!-- Conteúdo dinâmico -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inicialização
+        let pessoas = JSON.parse(localStorage.getItem('pessoas')) || [];
+        let agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+        let salaSelecionada = '';
+        let visualizacaoAtual = 'dia';
+        let dataAtual = new Date();
+        let dataSelecionada = new Date();
+
+        // Configurações do Google Sheets
+        const GOOGLE_SHEETS_CONFIG = {
+            scriptURL: '', // URL do Google Apps Script será adicionada aqui
+            isConfigured: false
+        };
+
+        // Função para configurar Google Sheets
+        function configurarGoogleSheets() {
+            const modal = document.getElementById('modal-detalhes');
+            const modalBody = document.getElementById('modal-body');
+            
+            modalBody.innerHTML = `
+                <h3>⚙️ Configurar Salvamento Automático no Google Sheets</h3>
+                <div class="form-group">
+                    <label>URL do Google Apps Script:</label>
+                    <input type="text" id="google-script-url" placeholder="Cole aqui a URL do seu Google Apps Script" 
+                           value="${GOOGLE_SHEETS_CONFIG.scriptURL}">
+                    <small style="color: #6b7280;">
+                        Siga o passo a passo abaixo para obter esta URL
+                    </small>
+                </div>
+                
+                <div style="background-color: #f3f4f6; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h4>📋 Passo a Passo:</h4>
+                    <ol style="line-height: 2;">
+                        <li>Acesse o <a href="https://sheets.google.com" target="_blank">Google Sheets</a></li>
+                        <li>Crie uma nova planilha chamada "Sistema Recepção Levitiis"</li>
+                        <li>Vá em <strong>Extensões → Apps Script</strong></li>
+                        <li>Delete o código existente e cole o código abaixo:</li>
+                    </ol>
+                    
+                    <pre style="background: #1f2937; color: #f3f4f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-size: 12px;">
+function doPost(e) {
+  try {
+    const dados = JSON.parse(e.postData.contents);
+    const planilha = SpreadsheetApp.getActiveSpreadsheet();
+    
+    // Aba Pessoas
+    let abaPessoas = planilha.getSheetByName('Pessoas');
+    if (!abaPessoas) {
+      abaPessoas = planilha.insertSheet('Pessoas');
+      abaPessoas.getRange(1, 1, 1, 5).setValues([['ID', 'Nome', 'Email', 'Celular', 'Tipo']]);
+    }
+    
+    // Aba Agendamentos
+    let abaAgendamentos = planilha.getSheetByName('Agendamentos');
+    if (!abaAgendamentos) {
+      abaAgendamentos = planilha.insertSheet('Agendamentos');
+      abaAgendamentos.getRange(1, 1, 1, 8).setValues([['ID', 'Pessoa', 'Email', 'Data', 'Horário', 'Duração', 'Sala', 'Observações']]);
+    }
+    
+    // Limpar dados antigos
+    if (abaPessoas.getLastRow() > 1) {
+      abaPessoas.getRange(2, 1, abaPessoas.getLastRow() - 1, 5).clearContent();
+    }
+    if (abaAgendamentos.getLastRow() > 1) {
+      abaAgendamentos.getRange(2, 1, abaAgendamentos.getLastRow() - 1, 8).clearContent();
+    }
+    
+    // Inserir pessoas
+    if (dados.pessoas && dados.pessoas.length > 0) {
+      const pessoasData = dados.pessoas.map(p => [p.id, p.nome, p.email, p.celular, p.tipo]);
+      abaPessoas.getRange(2, 1, pessoasData.length, 5).setValues(pessoasData);
+    }
+    
+    // Inserir agendamentos
+    if (dados.agendamentos && dados.agendamentos.length > 0) {
+      const agendamentosData = dados.agendamentos.map(a => [
+        a.id, a.pessoaNome, a.pessoaEmail, a.data, a.horarioInicio, 
+        a.duracao, a.sala, a.observacoes || ''
+      ]);
+      abaAgendamentos.getRange(2, 1, agendamentosData.length, 8).setValues(agendamentosData);
+    }
+    
+    // Log de backup
+    let abaLogs = planilha.getSheetByName('Logs');
+    if (!abaLogs) {
+      abaLogs = planilha.insertSheet('Logs');
+      abaLogs.getRange(1, 1, 1, 3).setValues([['Data/Hora', 'Total Pessoas', 'Total Agendamentos']]);
+    }
+    
+    const novoLog = [[
+      new Date().toLocaleString('pt-BR'),
+      dados.pessoas ? dados.pessoas.length : 0,
+      dados.agendamentos ? dados.agendamentos.length : 0
+    ]];
+    
+    abaLogs.getRange(abaLogs.getLastRow() + 1, 1, 1, 3).setValues(novoLog);
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'success',
+      message: 'Dados salvos com sucesso!'
+    })).setMimeType(ContentService.MimeType.JSON);
+    
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'error',
+      message: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet() {
+  return ContentService.createTextOutput('Sistema de Recepção - Levitiis Media Lab');
+}</pre>
+                    
+                    <ol start="5" style="line-height: 2; margin-top: 15px;">
+                        <li>Clique em <strong>Salvar</strong> (ícone de disquete)</li>
+                        <li>Clique em <strong>Implantar → Nova implantação</strong></li>
+                        <li>Configure:
+                            <ul style="margin-left: 20px;">
+                                <li>Tipo: <strong>App da Web</strong></li>
+                                <li>Executar como: <strong>Eu</strong></li>
+                                <li>Quem tem acesso: <strong>Qualquer pessoa</strong></li>
+                            </ul>
+                        </li>
+                        <li>Clique em <strong>Implantar</strong></li>
+                        <li>Copie a <strong>URL do app da Web</strong></li>
+                        <li>Cole a URL no campo acima</li>
+                    </ol>
+                </div>
+                
+                <div class="action-buttons" style="margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="salvarConfigGoogleSheets()">✅ Salvar Configuração</button>
+                    <button class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        // Função para salvar configuração do Google Sheets
+        function salvarConfigGoogleSheets() {
+            const url = document.getElementById('google-script-url').value.trim();
+            
+            if (!url) {
+                showAlert('Por favor, insira a URL do Google Apps Script!', 'error');
+                return;
+            }
+            
+            GOOGLE_SHEETS_CONFIG.scriptURL = url;
+            GOOGLE_SHEETS_CONFIG.isConfigured = true;
+            localStorage.setItem('googleSheetsConfig', JSON.stringify(GOOGLE_SHEETS_CONFIG));
+            
+            fecharModal();
+            showAlert('Configuração salva! Fazendo primeiro backup...', 'success');
+            
+            // Fazer primeiro backup
+            salvarNoGoogleSheets();
+        }
+
+        // Carregar configuração do Google Sheets
+        const savedConfig = localStorage.getItem('googleSheetsConfig');
+        if (savedConfig) {
+            const config = JSON.parse(savedConfig);
+            GOOGLE_SHEETS_CONFIG.scriptURL = config.scriptURL;
+            GOOGLE_SHEETS_CONFIG.isConfigured = config.isConfigured;
+        }
+
+        // Função para salvar no Google Sheets
+        async function salvarNoGoogleSheets() {
+            if (!GOOGLE_SHEETS_CONFIG.isConfigured || !GOOGLE_SHEETS_CONFIG.scriptURL) {
+                console.log('Google Sheets não configurado');
+                return;
+            }
+            
+            try {
+                const dados = {
+                    pessoas: pessoas,
+                    agendamentos: agendamentos,
+                    timestamp: new Date().toISOString()
+                };
+                
+                const response = await fetch(GOOGLE_SHEETS_CONFIG.scriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dados)
+                });
+                
+                // Como estamos usando no-cors, não podemos ler a resposta
+                // Mas o salvamento funciona
+                console.log('Dados enviados para Google Sheets');
+                
+                // Atualizar indicador visual
+                atualizarIndicadorSync(true);
+                
+            } catch (error) {
+                console.error('Erro ao salvar no Google Sheets:', error);
+                atualizarIndicadorSync(false);
+            }
+        }
+
+        // Função para atualizar indicador de sincronização
+        function atualizarIndicadorSync(sucesso) {
+            const indicator = document.getElementById('sync-indicator');
+            if (indicator) {
+                if (sucesso) {
+                    indicator.innerHTML = '☁️ Sincronizado';
+                    indicator.style.color = '#22c55e';
+                } else {
+                    indicator.innerHTML = '⚠️ Erro na sincronização';
+                    indicator.style.color = '#ef4444';
+                }
+                
+                setTimeout(() => {
+                    indicator.innerHTML = '';
+                }, 3000);
+            }
+        }
+
+        // Modificar as funções de salvamento para incluir Google Sheets
+        const salvarOriginal = localStorage.setItem;
+        Storage.prototype.setItem = function(key, value) {
+            salvarOriginal.apply(this, arguments);
+            
+            // Se for dados de pessoas ou agendamentos, salvar no Google Sheets
+            if (key === 'pessoas' || key === 'agendamentos') {
+                // Aguardar um pouco para evitar múltiplas chamadas
+                clearTimeout(window.saveTimeout);
+                window.saveTimeout = setTimeout(() => {
+                    salvarNoGoogleSheets();
+                }, 2000);
+            }
+        };
+
+        // Configurar data mínima como hoje
+        document.addEventListener('DOMContentLoaded', function() {
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('data-agendamento').min = hoje;
+            
+            // Gerar horários
+            gerarHorarios();
+            
+            // Carregar dados
+            carregarPessoas();
+            carregarListaPessoas();
+            updateDashboard();
+            carregarHistorico();
+        });
+
+        // Função para alternar modo escuro
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+            
+            const btn = document.querySelector('.dark-mode-toggle');
+            btn.textContent = isDarkMode ? '☀️ Modo Claro' : '🌙 Modo Escuro';
+        }
+
+        // Carregar preferência de tema
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.querySelector('.dark-mode-toggle').textContent = '☀️ Modo Claro';
+        }
+
+        // Função para mostrar abas
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            // Atualizar conteúdo quando mudar de aba
+            if (tabName === 'dashboard') updateDashboard();
+            if (tabName === 'cadastro') carregarListaPessoas();
+            if (tabName === 'agendamento') {
+                carregarPessoas();
+                // Limpar seleção de sala ao entrar na aba
+                document.querySelectorAll('.room-card').forEach(card => card.classList.remove('selected'));
+                salaSelecionada = '';
+                document.getElementById('sala-selecionada').value = '';
+            }
+            if (tabName === 'historico') carregarHistorico();
+        }
+
+        // Função para mostrar alertas
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert ${type}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        // Função para formatar telefone
+        function formatarTelefone(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            if (value.length > 6) {
+                value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
+            } else if (value.length > 2) {
+                value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+            }
+            
+            input.value = value;
+        }
+
+        // Event listener para formatar telefone
+        document.getElementById('celular').addEventListener('input', function() {
+            formatarTelefone(this);
+        });
+
+        // Função para cadastrar pessoa
+        function cadastrarPessoa(event) {
+            event.preventDefault();
+            
+            const nome = document.getElementById('nome').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const celular = document.getElementById('celular').value.trim();
+            const tipo = document.getElementById('tipo').value;
+            
+            // Verificar se já existe
+            if (pessoas.find(p => p.email === email)) {
+                showAlert('E-mail já cadastrado!', 'error');
+                return;
+            }
+            
+            const novaPessoa = {
+                id: Date.now(),
+                nome,
+                email,
+                celular,
+                tipo,
+                dataCadastro: new Date().toISOString()
+            };
+            
+            pessoas.push(novaPessoa);
+            localStorage.setItem('pessoas', JSON.stringify(pessoas));
+            
+            showAlert('Pessoa cadastrada com sucesso!', 'success');
+            document.getElementById('form-cadastro').reset();
+            carregarListaPessoas();
+            carregarPessoas();
+        }
+
+        // Função para carregar lista de pessoas
+        function carregarListaPessoas() {
+            const lista = document.getElementById('lista-pessoas');
+            lista.innerHTML = '';
+            
+            if (pessoas.length === 0) {
+                lista.innerHTML = '<p style="text-align: center; color: #6b7280;">Nenhuma pessoa cadastrada ainda.</p>';
+                return;
+            }
+            
+            pessoas.forEach(pessoa => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.innerHTML = `
+                    <div>
+                        <strong>${pessoa.nome}</strong><br>
+                        <small>${pessoa.email} | ${pessoa.celular}</small><br>
+                        <span class="badge" style="background-color: ${pessoa.tipo === 'colaborador' ? '#dbeafe' : '#fef3c7'}; color: ${pessoa.tipo === 'colaborador' ? '#1e40af' : '#92400e'};">
+                            ${pessoa.tipo.charAt(0).toUpperCase() + pessoa.tipo.slice(1)}
+                        </span>
+                    </div>
+                    <button class="btn btn-danger" onclick="excluirPessoa(${pessoa.id})">🗑️</button>
+                `;
+                lista.appendChild(item);
+            });
+        }
+
+        // Função para excluir pessoa
+        function excluirPessoa(id) {
+            if (!confirm('Deseja realmente excluir esta pessoa?')) return;
+            
+            pessoas = pessoas.filter(p => p.id !== id);
+            localStorage.setItem('pessoas', JSON.stringify(pessoas));
+            
+            // Remover agendamentos da pessoa
+            agendamentos = agendamentos.filter(a => a.pessoaId !== id);
+            localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
+            
+            showAlert('Pessoa excluída com sucesso!', 'success');
+            carregarListaPessoas();
+            carregarPessoas();
+        }
+
+        // Função para carregar pessoas no select
+        function carregarPessoas() {
+            const select = document.getElementById('pessoa-agendamento');
+            select.innerHTML = '<option value="">Selecione uma pessoa</option>';
+            
+            pessoas.forEach(pessoa => {
+                const option = document.createElement('option');
+                option.value = pessoa.id;
+                option.textContent = `${pessoa.nome} (${pessoa.tipo})`;
+                select.appendChild(option);
+            });
+        }
+
+        // Função para gerar horários
+        function gerarHorarios() {
+            const select = document.getElementById('horario-inicio');
+            select.innerHTML = '<option value="">Selecione</option>';
+            
+            for (let hora = 8; hora < 18; hora++) {
+                for (let minuto = 0; minuto < 60; minuto += 30) {
+                    const h = hora.toString().padStart(2, '0');
+                    const m = minuto.toString().padStart(2, '0');
+                    const value = `${h}:${m}`;
+                    const option = document.createElement('option');
+                    option.value = value;
+                    option.textContent = value;
+                    select.appendChild(option);
+                }
+            }
+        }
+
+        // Função para selecionar sala
+        function selecionarSala(sala, element) {
+            // Prevenir propagação do evento
+            event.stopPropagation();
+            
+            // Remover seleção anterior de TODAS as salas
+            document.querySelectorAll('.room-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Adicionar seleção apenas no elemento clicado
+            element.classList.add('selected');
+            salaSelecionada = sala;
+            document.getElementById('sala-selecionada').value = sala;
+            
+            verificarDisponibilidade();
+        }
+
+        // Função para verificar disponibilidade
+        function verificarDisponibilidade() {
+            const data = document.getElementById('data-agendamento').value;
+            const horarioInicio = document.getElementById('horario-inicio').value;
+            const duracao = parseInt(document.getElementById('duracao').value);
+            
+            if (!data || !horarioInicio || !salaSelecionada) return;
+            
+            const inicio = new Date(`${data}T${horarioInicio}`);
+            const fim = new Date(inicio.getTime() + duracao * 60000);
+            
+            // Verificar conflitos
+            const conflito = agendamentos.find(a => {
+                if (a.sala !== salaSelecionada || a.data !== data) return false;
+                
+                const aInicio = new Date(`${a.data}T${a.horarioInicio}`);
+                const aFim = new Date(aInicio.getTime() + a.duracao * 60000);
+                
+                return (inicio < aFim && fim > aInicio);
+            });
+            
+            if (conflito) {
+                showAlert('Horário já ocupado nesta sala!', 'error');
+            }
+        }
+
+        // Função para criar agendamento
+        function criarAgendamento(event) {
+            event.preventDefault();
+            
+            const pessoaId = parseInt(document.getElementById('pessoa-agendamento').value);
+            const data = document.getElementById('data-agendamento').value;
+            const horarioInicio = document.getElementById('horario-inicio').value;
+            const duracao = parseInt(document.getElementById('duracao').value);
+            const observacoes = document.getElementById('observacoes').value;
+            
+            if (!salaSelecionada) {
+                showAlert('Por favor, selecione uma sala!', 'error');
+                return;
+            }
+            
+            // Verificar horário comercial
+            const hora = parseInt(horarioInicio.split(':')[0]);
+            const minuto = parseInt(horarioInicio.split(':')[1]);
+            const horarioFim = hora + Math.floor((minuto + duracao) / 60);
+            
+            if (horarioFim > 18) {
+                showAlert('O agendamento ultrapassa o horário comercial (18h)!', 'error');
+                return;
+            }
+            
+            // Verificar conflitos novamente
+            const inicio = new Date(`${data}T${horarioInicio}`);
+            const fim = new Date(inicio.getTime() + duracao * 60000);
+            
+            const conflito = agendamentos.find(a => {
+                if (a.sala !== salaSelecionada || a.data !== data) return false;
+                
+                const aInicio = new Date(`${a.data}T${a.horarioInicio}`);
+                const aFim = new Date(aInicio.getTime() + a.duracao * 60000);
+                
+                return (inicio < aFim && fim > aInicio);
+            });
+            
+            if (conflito) {
+                showAlert('Horário já ocupado nesta sala!', 'error');
+                return;
+            }
+            
+            const pessoa = pessoas.find(p => p.id === pessoaId);
+            
+            const novoAgendamento = {
+                id: Date.now(),
+                pessoaId,
+                pessoaNome: pessoa.nome,
+                pessoaEmail: pessoa.email,
+                data,
+                horarioInicio,
+                duracao,
+                sala: salaSelecionada,
+                observacoes,
+                dataCriacao: new Date().toISOString()
+            };
+            
+            agendamentos.push(novoAgendamento);
+            localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
+            
+            showAlert('Agendamento criado com sucesso!', 'success');
+            document.getElementById('form-agendamento').reset();
+            document.querySelectorAll('.room-card').forEach(card => card.classList.remove('selected'));
+            salaSelecionada = '';
+            document.getElementById('sala-selecionada').value = '';
+            
+            // Ir para o dashboard
+            showTab('dashboard');
+            document.querySelector('.tab.active').classList.remove('active');
+            document.querySelector('.tab').classList.add('active');
+        }
+
+        // Função para atualizar dashboard
+        function updateDashboard() {
+            atualizarEstatisticas();
+            
+            switch(visualizacaoAtual) {
+                case 'dia':
+                    renderizarVisualizacaoDia();
+                    break;
+                case 'semana':
+                    renderizarVisualizacaoSemana();
+                    break;
+                case 'mes':
+                    renderizarVisualizacaoMes();
+                    break;
+            }
+        }
+
+        // Função para atualizar estatísticas
+        function atualizarEstatisticas() {
+            const hoje = new Date().toISOString().split('T')[0];
+            const agendamentosHoje = agendamentos.filter(a => a.data === hoje);
+            
+            document.getElementById('total-agendamentos').textContent = agendamentosHoje.length;
+            
+            const salasOcupadas = new Set(agendamentosHoje.map(a => a.sala)).size;
+            document.getElementById('salas-disponiveis').textContent = 5 - salasOcupadas;
+            
+            const visitantesUnicos = new Set(agendamentosHoje.map(a => a.pessoaId)).size;
+            document.getElementById('visitantes-hoje').textContent = visitantesUnicos;
+        }
+
+        // Função para mudar visualização
+        function mudarVisualizacao(tipo) {
+            visualizacaoAtual = tipo;
+            
+            // Atualizar botões
+            document.querySelectorAll('.view-selector button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Atualizar título
+            atualizarTituloCalendario();
+            
+            // Renderizar nova visualização
+            updateDashboard();
+        }
+
+        // Função para navegar no calendário
+        function navegarCalendario(direcao) {
+            switch(visualizacaoAtual) {
+                case 'dia':
+                    dataSelecionada.setDate(dataSelecionada.getDate() + direcao);
+                    break;
+                case 'semana':
+                    dataSelecionada.setDate(dataSelecionada.getDate() + (7 * direcao));
+                    break;
+                case 'mes':
+                    dataSelecionada.setMonth(dataSelecionada.getMonth() + direcao);
+                    break;
+            }
+            
+            atualizarTituloCalendario();
+            updateDashboard();
+        }
+
+        // Função para atualizar título do calendário
+        function atualizarTituloCalendario() {
+            const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+                          'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            
+            let titulo = '';
+            
+            switch(visualizacaoAtual) {
+                case 'dia':
+                    titulo = dataSelecionada.toLocaleDateString('pt-BR', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+                    break;
+                case 'semana':
+                    const inicioSemana = new Date(dataSelecionada);
+                    const fimSemana = new Date(dataSelecionada);
+                    const diaSemana = dataSelecionada.getDay();
+                    inicioSemana.setDate(dataSelecionada.getDate() - diaSemana);
+                    fimSemana.setDate(dataSelecionada.getDate() + (6 - diaSemana));
+                    
+                    titulo = `${inicioSemana.getDate()}/${inicioSemana.getMonth() + 1} - ${fimSemana.getDate()}/${fimSemana.getMonth() + 1}/${fimSemana.getFullYear()}`;
+                    break;
+                case 'mes':
+                    titulo = `${meses[dataSelecionada.getMonth()]} ${dataSelecionada.getFullYear()}`;
+                    break;
+            }
+            
+            document.getElementById('calendar-title').textContent = titulo;
+        }
+
+        // Renderizar visualização do dia
+        function renderizarVisualizacaoDia() {
+            const content = document.getElementById('dashboard-content');
+            const dataStr = dataSelecionada.toISOString().split('T')[0];
+            const agendamentosDia = agendamentos.filter(a => a.data === dataStr);
+            
+            content.innerHTML = '<h3>📅 Agenda do Dia</h3>';
+            
+            if (agendamentosDia.length === 0) {
+                content.innerHTML += '<p style="text-align: center; color: #6b7280; margin-top: 20px;">Nenhum agendamento para esta data.</p>';
+                return;
+            }
+            
+            // Agrupar por sala
+            const salas = {
+                'sala-azul': { nome: '🔵 Sala Azul', agendamentos: [] },
+                'sala-vermelha': { nome: '🔴 Sala Vermelha', agendamentos: [] },
+                'sala-verde': { nome: '🟢 Sala Verde', agendamentos: [] },
+                'sala-laranja': { nome: '🟠 Sala Laranja', agendamentos: [] },
+                'espaco-treinamento': { nome: '🎓 Espaço de Treinamento', agendamentos: [] }
+            };
+            
+            agendamentosDia.forEach(a => {
+                if (salas[a.sala]) {
+                    salas[a.sala].agendamentos.push(a);
+                }
+            });
+            
+            // Criar visualização por sala
+            Object.entries(salas).forEach(([salaId, salaInfo]) => {
+                if (salaInfo.agendamentos.length === 0) return;
+                
+                const salaDiv = document.createElement('div');
+                salaDiv.className = 'card';
+                salaDiv.style.marginTop = '20px';
+                
+                let salaHtml = `<h4>${salaInfo.nome}</h4>`;
+                
+                salaInfo.agendamentos.sort((a, b) => a.horarioInicio.localeCompare(b.horarioInicio));
+                
+                salaInfo.agendamentos.forEach(a => {
+                    const horarioFim = calcularHorarioFim(a.horarioInicio, a.duracao);
+                    salaHtml += `
+                        <div class="history-item" style="cursor: pointer;" onclick="mostrarDetalhes(${a.id})">
+                            <div>
+                                <strong>${a.horarioInicio} - ${horarioFim}</strong><br>
+                                <span>${a.pessoaNome}</span><br>
+                                <small>${a.observacoes || 'Sem observações'}</small>
+                            </div>
+                            <div style="display: flex; gap: 5px;">
+                                <button class="btn btn-secondary" onclick="event.stopPropagation(); editarAgendamento(${a.id})">✏️</button>
+                                <button class="btn btn-danger" onclick="event.stopPropagation(); excluirAgendamento(${a.id})">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                salaDiv.innerHTML = salaHtml;
+                content.appendChild(salaDiv);
+            });
+        }
+
+        // Renderizar visualização semanal
+        function renderizarVisualizacaoSemana() {
+            const content = document.getElementById('dashboard-content');
+            content.innerHTML = '';
+            
+            // Calcular início e fim da semana
+            const diaSemana = dataSelecionada.getDay();
+            const inicioSemana = new Date(dataSelecionada);
+            inicioSemana.setDate(dataSelecionada.getDate() - diaSemana);
+            
+            // Criar header com dias da semana
+            let html = '<div class="week-view">';
+            
+            // Coluna de horários
+            html += '<div></div>'; // Célula vazia no canto
+            
+            // Headers dos dias
+            const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            for (let i = 0; i < 7; i++) {
+                const dia = new Date(inicioSemana);
+                dia.setDate(inicioSemana.getDate() + i);
+                const isHoje = dia.toDateString() === new Date().toDateString();
+                
+                html += `<div class="week-time-slot" style="${isHoje ? 'background-color: var(--primary-color); color: white;' : ''}">
+                    <strong>${diasSemana[i]}</strong><br>
+                    ${dia.getDate()}/${dia.getMonth() + 1}
+                </div>`;
+            }
+            
+            // Criar slots de horário
+            for (let hora = 8; hora < 18; hora++) {
+                html += `<div class="week-time-slot">${hora}:00</div>`;
+                
+                for (let dia = 0; dia < 7; dia++) {
+                    const data = new Date(inicioSemana);
+                    data.setDate(inicioSemana.getDate() + dia);
+                    const dataStr = data.toISOString().split('T')[0];
+                    
+                    const agendamentosHora = agendamentos.filter(a => {
+                        if (a.data !== dataStr) return false;
+                        const horaInicio = parseInt(a.horarioInicio.split(':')[0]);
+                        return horaInicio === hora;
+                    });
+                    
+                    html += '<div class="week-day-column">';
+                    
+                    agendamentosHora.forEach(a => {
+                        const minutoInicio = parseInt(a.horarioInicio.split(':')[1]);
+                        const topPosition = (minutoInicio / 60) * 100;
+                        const height = (a.duracao / 60) * 100;
+                        
+                        html += `
+                            <div class="week-event ${a.sala}" 
+                                 style="top: ${topPosition}%; height: ${height}%;"
+                                 onclick="mostrarDetalhes(${a.id})">
+                                <strong>${a.horarioInicio}</strong><br>
+                                ${a.pessoaNome}<br>
+                                <small>${getNomeSala(a.sala)}</small>
+                                <div class="event-actions">
+                                    <button class="event-action-btn" onclick="event.stopPropagation(); editarAgendamento(${a.id})">✏️</button>
+                                    <button class="event-action-btn" onclick="event.stopPropagation(); excluirAgendamento(${a.id})">🗑️</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                }
+            }
+            
+            html += '</div>';
+            content.innerHTML = html;
+        }
+
+        // Renderizar visualização mensal
+        function renderizarVisualizacaoMes() {
+            const content = document.getElementById('dashboard-content');
+            content.innerHTML = '';
+            
+            const ano = dataSelecionada.getFullYear();
+            const mes = dataSelecionada.getMonth();
+            
+            // Primeiro dia do mês
+            const primeiroDia = new Date(ano, mes, 1);
+            const ultimoDia = new Date(ano, mes + 1, 0);
+            
+            // Criar grid do calendário
+            let html = '<div class="calendar-grid">';
+            
+            // Headers dos dias
+            const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            diasSemana.forEach(dia => {
+                html += `<div class="calendar-day-header">${dia}</div>`;
+            });
+            
+            // Dias do mês anterior
+            const diasAntes = primeiroDia.getDay();
+            const ultimoDiaMesAnterior = new Date(ano, mes, 0).getDate();
+            
+            for (let i = diasAntes - 1; i >= 0; i--) {
+                html += `<div class="calendar-day other-month">
+                    <div class="calendar-day-number">${ultimoDiaMesAnterior - i}</div>
+                </div>`;
+            }
+            
+            // Dias do mês atual
+            for (let dia = 1; dia <= ultimoDia.getDate(); dia++) {
+                const data = new Date(ano, mes, dia);
+                const dataStr = data.toISOString().split('T')[0];
+                const isHoje = dataStr === new Date().toISOString().split('T')[0];
+                const isSelected = dataStr === dataSelecionada.toISOString().split('T')[0];
+                
+                const agendamentosDia = agendamentos.filter(a => a.data === dataStr);
+                
+                html += `<div class="calendar-day ${isHoje ? 'today' : ''} ${isSelected ? 'selected' : ''}" 
+                              onclick="selecionarDia('${dataStr}')">
+                    <div class="calendar-day-number">${dia}</div>`;
+                
+                // Mostrar até 3 agendamentos
+                agendamentosDia.slice(0, 3).forEach(a => {
+                    html += `
+                        <div class="calendar-event ${a.sala}" 
+                             onclick="event.stopPropagation(); mostrarDetalhes(${a.id})">
+                            ${a.horarioInicio} - ${a.pessoaNome}
+                        </div>
+                    `;
+                });
+                
+                if (agendamentosDia.length > 3) {
+                    html += `<div style="font-size: 11px; color: #6b7280; text-align: center;">
+                        +${agendamentosDia.length - 3} mais
+                    </div>`;
+                }
+                
+                html += '</div>';
+            }
+            
+            // Dias do próximo mês
+            const diasDepois = 42 - (diasAntes + ultimoDia.getDate());
+            for (let dia = 1; dia <= diasDepois; dia++) {
+                html += `<div class="calendar-day other-month">
+                    <div class="calendar-day-number">${dia}</div>
+                </div>`;
+            }
+            
+            html += '</div>';
+            content.innerHTML = html;
+        }
+
+        // Função para selecionar dia no calendário mensal
+        function selecionarDia(dataStr) {
+            dataSelecionada = new Date(dataStr + 'T12:00:00');
+            visualizacaoAtual = 'dia';
+            
+            // Atualizar botões
+            document.querySelectorAll('.view-selector button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector('.view-selector button').classList.add('active');
+            
+            atualizarTituloCalendario();
+            updateDashboard();
+        }
+
+        // Função auxiliar para obter nome da sala
+        function getNomeSala(salaId) {
+            const nomes = {
+                'sala-azul': 'Sala Azul',
+                'sala-vermelha': 'Sala Vermelha',
+                'sala-verde': 'Sala Verde',
+                'sala-laranja': 'Sala Laranja',
+                'espaco-treinamento': 'Espaço de Treinamento'
+            };
+            return nomes[salaId] || salaId;
+        }
+
+        // Função para editar agendamento
+        function editarAgendamento(id) {
+            const agendamento = agendamentos.find(a => a.id === id);
+            if (!agendamento) return;
+            
+            // Preencher formulário com dados do agendamento
+            document.getElementById('pessoa-agendamento').value = agendamento.pessoaId;
+            document.getElementById('data-agendamento').value = agendamento.data;
+            document.getElementById('horario-inicio').value = agendamento.horarioInicio;
+            document.getElementById('duracao').value = agendamento.duracao;
+            document.getElementById('observacoes').value = agendamento.observacoes || '';
+            
+            // Selecionar sala
+            document.querySelectorAll('.room-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            const salaCard = Array.from(document.querySelectorAll('.room-card')).find(card => {
+                return card.onclick.toString().includes(agendamento.sala);
+            });
+            
+            if (salaCard) {
+                salaCard.classList.add('selected');
+                salaSelecionada = agendamento.sala;
+                document.getElementById('sala-selecionada').value = agendamento.sala;
+            }
+            
+            // Remover agendamento antigo
+            agendamentos = agendamentos.filter(a => a.id !== id);
+            localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
+            
+            // Mudar para aba de agendamento
+            showTab('agendamento');
+            document.querySelector('.tab.active').classList.remove('active');
+            document.querySelectorAll('.tab')[2].classList.add('active');
+            
+            showAlert('Editando agendamento. Faça as alterações e salve novamente.', 'success');
+        }
+
+        // Função para calcular horário de fim
+        function calcularHorarioFim(inicio, duracao) {
+            const [hora, minuto] = inicio.split(':').map(Number);
+            const totalMinutos = hora * 60 + minuto + duracao;
+            const horaFim = Math.floor(totalMinutos / 60);
+            const minutoFim = totalMinutos % 60;
+            
+            return `${horaFim.toString().padStart(2, '0')}:${minutoFim.toString().padStart(2, '0')}`;
+        }
+
+        // Função para mostrar detalhes
+        function mostrarDetalhes(id) {
+            const agendamento = agendamentos.find(a => a.id === id);
+            if (!agendamento) return;
+            
+            const modal = document.getElementById('modal-detalhes');
+            const modalBody = document.getElementById('modal-body');
+            
+            const horarioFim = calcularHorarioFim(agendamento.horarioInicio, agendamento.duracao);
+            const nomeSala = {
+                'sala-azul': '🔵 Sala Azul',
+                'sala-vermelha': '🔴 Sala Vermelha',
+                'sala-verde': '🟢 Sala Verde',
+                'sala-laranja': '🟠 Sala Laranja',
+                'espaco-treinamento': '🎓 Espaço de Treinamento'
+            }[agendamento.sala];
+            
+            modalBody.innerHTML = `
+                <div class="form-group">
+                    <label>Pessoa:</label>
+                    <p>${agendamento.pessoaNome}</p>
+                </div>
+                <div class="form-group">
+                    <label>E-mail:</label>
+                    <p>${agendamento.pessoaEmail}</p>
+                </div>
+                <div class="form-group">
+                    <label>Data:</label>
+                    <p>${new Date(agendamento.data).toLocaleDateString('pt-BR')}</p>
+                </div>
+                <div class="form-group">
+                    <label>Horário:</label>
+                    <p>${agendamento.horarioInicio} - ${horarioFim} (${agendamento.duracao} minutos)</p>
+                </div>
+                <div class="form-group">
+                    <label>Sala:</label>
+                    <p>${nomeSala}</p>
+                </div>
+                <div class="form-group">
+                    <label>Observações:</label>
+                    <p>${agendamento.observacoes || 'Sem observações'}</p>
+                </div>
+                <div class="form-group">
+                    <label>Agendado em:</label>
+                    <p>${new Date(agendamento.dataCriacao).toLocaleString('pt-BR')}</p>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        // Função para fechar modal
+        function fecharModal() {
+            document.getElementById('modal-detalhes').style.display = 'none';
+        }
+
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal-detalhes');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Função para excluir agendamento
+        function excluirAgendamento(id) {
+            if (!confirm('Deseja realmente excluir este agendamento?')) return;
+            
+            agendamentos = agendamentos.filter(a => a.id !== id);
+            localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
+            
+            showAlert('Agendamento excluído com sucesso!', 'success');
+            updateDashboard();
+        }
+
+        // Função para carregar histórico
+        function carregarHistorico() {
+            const lista = document.getElementById('lista-historico');
+            lista.innerHTML = '';
+            
+            if (agendamentos.length === 0) {
+                lista.innerHTML = '<p style="text-align: center; color: #6b7280;">Nenhum agendamento registrado ainda.</p>';
+                return;
+            }
+            
+            // Ordenar por data decrescente
+            const agendamentosOrdenados = [...agendamentos].sort((a, b) => {
+                const dataA = new Date(`${a.data}T${a.horarioInicio}`);
+                const dataB = new Date(`${b.data}T${b.horarioInicio}`);
+                return dataB - dataA;
+            });
+            
+            agendamentosOrdenados.forEach(a => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.style.cursor = 'pointer';
+                item.onclick = () => mostrarDetalhes(a.id);
+                
+                const nomeSala = {
+                    'sala-azul': 'Sala Azul',
+                    'sala-vermelha': 'Sala Vermelha',
+                    'sala-verde': 'Sala Verde',
+                    'sala-laranja': 'Sala Laranja',
+                    'espaco-treinamento': 'Espaço de Treinamento'
+                }[a.sala];
+                
+                item.innerHTML = `
+                    <div>
+                        <strong>${a.pessoaNome}</strong><br>
+                        <small>${new Date(a.data).toLocaleDateString('pt-BR')} às ${a.horarioInicio}</small><br>
+                        <span class="badge ${a.sala === 'sala-azul' ? 'sala-azul' : ''}">${nomeSala}</span>
+                    </div>
+                    <div>
+                        ${new Date(a.data) >= new Date() ? '<span style="color: #22c55e;">✓ Ativo</span>' : '<span style="color: #6b7280;">Concluído</span>'}
+                    </div>
+                `;
+                lista.appendChild(item);
+            });
+        }
+
+        // Função para buscar no histórico
+        function buscarHistorico() {
+            const busca = document.getElementById('busca-historico').value.toLowerCase();
+            const items = document.querySelectorAll('#lista-historico .history-item');
+            
+            items.forEach(item => {
+                const texto = item.textContent.toLowerCase();
+                item.style.display = texto.includes(busca) ? 'flex' : 'none';
+            });
+        }
+
+        // Função para exportar dia em CSV
+        function exportarDia() {
+            let agendamentosParaExportar = [];
+            let nomeArquivo = '';
+            
+            switch(visualizacaoAtual) {
+                case 'dia':
+                    const dataStr = dataSelecionada.toISOString().split('T')[0];
+                    agendamentosParaExportar = agendamentos.filter(a => a.data === dataStr);
+                    nomeArquivo = `agendamentos_${dataStr}.csv`;
+                    break;
+                    
+                case 'semana':
+                    const diaSemana = dataSelecionada.getDay();
+                    const inicioSemana = new Date(dataSelecionada);
+                    inicioSemana.setDate(dataSelecionada.getDate() - diaSemana);
+                    const fimSemana = new Date(inicioSemana);
+                    fimSemana.setDate(inicioSemana.getDate() + 6);
+                    
+                    agendamentosParaExportar = agendamentos.filter(a => {
+                        const dataAgend = new Date(a.data);
+                        return dataAgend >= inicioSemana && dataAgend <= fimSemana;
+                    });
+                    nomeArquivo = `agendamentos_semana_${inicioSemana.toISOString().split('T')[0]}.csv`;
+                    break;
+                    
+                case 'mes':
+                    const mes = dataSelecionada.getMonth();
+                    const ano = dataSelecionada.getFullYear();
+                    
+                    agendamentosParaExportar = agendamentos.filter(a => {
+                        const dataAgend = new Date(a.data);
+                        return dataAgend.getMonth() === mes && dataAgend.getFullYear() === ano;
+                    });
+                    nomeArquivo = `agendamentos_${ano}-${(mes + 1).toString().padStart(2, '0')}.csv`;
+                    break;
+            }
+            
+            if (agendamentosParaExportar.length === 0) {
+                showAlert('Nenhum agendamento para exportar neste período!', 'error');
+                return;
+            }
+            
+            let csv = 'Nome,Email,Data,Horário Início,Duração (min),Sala,Observações\n';
+            
+            agendamentosParaExportar.forEach(a => {
+                const nomeSala = getNomeSala(a.sala);
+                csv += `"${a.pessoaNome}","${a.pessoaEmail}","${a.data}","${a.horarioInicio}","${a.duracao}","${nomeSala}","${a.observacoes || ''}"\n`;
+            });
+            
+            // Criar e baixar arquivo
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = nomeArquivo;
+            link.click();
+            
+            showAlert('Arquivo exportado com sucesso!', 'success');
+        }
+
+        // Função para backup completo
+        function backupDados() {
+            const dados = {
+                pessoas,
+                agendamentos,
+                dataBackup: new Date().toISOString()
+            };
+            
+            const json = JSON.stringify(dados, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `backup_levitiis_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            showAlert('Backup realizado com sucesso!', 'success');
+        }
+
+        // Prevenir perda de dados ao sair
+        window.addEventListener('beforeunload', function(e) {
+            const formCadastro = document.getElementById('form-cadastro');
+            const formAgendamento = document.getElementById('form-agendamento');
+            
+            // Verificar se há dados não salvos
+            const temDadosCadastro = formCadastro.querySelector('input[type="text"]').value ||
+                                   formCadastro.querySelector('input[type="email"]').value ||
+                                   formCadastro.querySelector('input[type="tel"]').value;
+            
+            const temDadosAgendamento = formAgendamento.querySelector('select').value ||
+                                      formAgendamento.querySelector('input[type="date"]').value ||
+                                      formAgendamento.querySelector('textarea').value;
+            
+            if (temDadosCadastro || temDadosAgendamento) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        // Função para importar backup (adicionar botão se necessário)
+        function importarBackup(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const dados = JSON.parse(e.target.result);
+                    
+                    if (!dados.pessoas || !dados.agendamentos) {
+                        showAlert('Arquivo de backup inválido!', 'error');
+                        return;
+                    }
+                    
+                    if (confirm('Isso substituirá todos os dados atuais. Deseja continuar?')) {
+                        pessoas = dados.pessoas;
+                        agendamentos = dados.agendamentos;
+                        
+                        localStorage.setItem('pessoas', JSON.stringify(pessoas));
+                        localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
+                        
+                        showAlert('Backup restaurado com sucesso!', 'success');
+                        
+                        // Recarregar dados
+                        carregarPessoas();
+                        carregarListaPessoas();
+                        updateDashboard();
+                        carregarHistorico();
+                    }
+                } catch (error) {
+                    showAlert('Erro ao importar backup!', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Função para importar dados do Google Sheets
+        async function importarDoGoogleSheets() {
+            if (!GOOGLE_SHEETS_CONFIG.isConfigured || !GOOGLE_SHEETS_CONFIG.scriptURL) {
+                showAlert('Configure primeiro a conexão com o Google Sheets!', 'error');
+                configurarGoogleSheets();
+                return;
+            }
+            
+            if (!confirm('Isso substituirá todos os dados locais pelos dados salvos no Google Sheets. Deseja continuar?')) {
+                return;
+            }
+            
+            showAlert('Recuperando dados do Google Sheets...', 'success');
+            
+            // Para recuperar dados, você precisará modificar o Google Apps Script
+            // para incluir uma função doGet que retorne os dados
+            // Por enquanto, informamos ao usuário
+            
+            const modal = document.getElementById('modal-detalhes');
+            const modalBody = document.getElementById('modal-body');
+            
+            modalBody.innerHTML = `
+                <h3>📥 Como Recuperar Dados do Google Sheets</h3>
+                <p>Para recuperar dados, acesse sua planilha do Google Sheets e:</p>
+                <ol>
+                    <li>Exporte as abas "Pessoas" e "Agendamentos" como CSV</li>
+                    <li>Use a função de importar backup do sistema</li>
+                </ol>
+                <p style="margin-top: 20px;">
+                    <strong>Ou adicione este código ao seu Google Apps Script para recuperação automática:</strong>
+                </p>
+                <pre style="background: #1f2937; color: #f3f4f6; padding: 15px; border-radius: 5px; overflow-x: auto; font-size: 12px;">
+function doGet() {
+  const planilha = SpreadsheetApp.getActiveSpreadsheet();
+  const abaPessoas = planilha.getSheetByName('Pessoas');
+  const abaAgendamentos = planilha.getSheetByName('Agendamentos');
+  
+  const pessoas = [];
+  const agendamentos = [];
+  
+  if (abaPessoas && abaPessoas.getLastRow() > 1) {
+    const dadosPessoas = abaPessoas.getRange(2, 1, abaPessoas.getLastRow() - 1, 5).getValues();
+    dadosPessoas.forEach(row => {
+      if (row[0]) {
+        pessoas.push({
+          id: row[0],
+          nome: row[1],
+          email: row[2],
+          celular: row[3],
+          tipo: row[4]
+        });
+      }
+    });
+  }
+  
+  if (abaAgendamentos && abaAgendamentos.getLastRow() > 1) {
+    const dadosAgendamentos = abaAgendamentos.getRange(2, 1, abaAgendamentos.getLastRow() - 1, 8).getValues();
+    dadosAgendamentos.forEach(row => {
+      if (row[0]) {
+        agendamentos.push({
+          id: row[0],
+          pessoaNome: row[1],
+          pessoaEmail: row[2],
+          data: row[3],
+          horarioInicio: row[4],
+          duracao: row[5],
+          sala: row[6],
+          observacoes: row[7]
+        });
+      }
+    });
+  }
+  
+  return ContentService.createTextOutput(JSON.stringify({
+    pessoas: pessoas,
+    agendamentos: agendamentos
+  })).setMimeType(ContentService.MimeType.JSON);
+}</pre>
+                <button class="btn btn-primary" onclick="fecharModal()" style="margin-top: 20px;">Fechar</button>
+            `;
+            
+            modal.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
